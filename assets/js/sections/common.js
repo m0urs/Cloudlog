@@ -370,7 +370,7 @@ function validateLocator(locator) {
 }
 
 // This displays the dialog with the form and it's where the resulttable is displayed
-function spawnLookupModal() {
+function spawnLookupModal(searchphrase, searchtype) {
 	$.ajax({
 		url: base_url + 'index.php/lookup',
 		type: 'post',
@@ -384,38 +384,22 @@ function spawnLookupModal() {
 				onshown: function(dialog) {
 					$('#quicklookuptype').change(function(){
 						var type = $('#quicklookuptype').val();
-						if (type == "dxcc") {
-							$('#quicklookupdxcc').show();
-							$('#quicklookupiota').hide();
-							$('#quicklookupcqz').hide();
-							$('#quicklookupwas').hide();
-							$('#quicklookuptext').hide();
-						} else if (type == "iota") {
-							$('#quicklookupiota').show();
-							$('#quicklookupdxcc').hide();
-							$('#quicklookupcqz').hide();
-							$('#quicklookupwas').hide();
-							$('#quicklookuptext').hide();
-						} else if (type == "vucc" || type == "sota" || type == "wwff") {
-							$('#quicklookuptext').show();
-							$('#quicklookupiota').hide();
-							$('#quicklookupdxcc').hide();
-							$('#quicklookupcqz').hide();
-							$('#quicklookupwas').hide();
-						} else if (type == "cq") {
-							$('#quicklookupcqz').show();
-							$('#quicklookupiota').hide();
-							$('#quicklookupdxcc').hide();
-							$('#quicklookupwas').hide();
-							$('#quicklookuptext').hide();
-						} else if (type == "was") {
-							$('#quicklookupwas').show();
-							$('#quicklookupcqz').hide();
-							$('#quicklookupiota').hide();
-							$('#quicklookupdxcc').hide();
-							$('#quicklookuptext').hide();
-						}
+                        changeLookupType(type);
 					});
+                    if (searchtype !== undefined) {
+                        $('#quicklookuptype').val(searchtype);
+                        if (searchtype == 'dxcc') {
+                            $("#quicklookupdxcc").val(searchphrase);
+                        } else if (searchtype == 'iota') {
+                            $("#quicklookupiota").val(searchphrase);
+                        } else if (searchtype == 'cq') {
+                            $("#quicklookupcqz").val(searchphrase);
+                        } else {
+                            $("#quicklookuptext").val(searchphrase);
+                        }
+                        changeLookupType(searchtype);
+                        getLookupResult(this.form);
+                    }
 				},
 				buttons: [{
 					label: 'Close',
@@ -426,6 +410,40 @@ function spawnLookupModal() {
 			});
 		}
 	});
+}
+
+function changeLookupType(type) {
+    if (type == "dxcc") {
+        $('#quicklookupdxcc').show();
+        $('#quicklookupiota').hide();
+        $('#quicklookupcqz').hide();
+        $('#quicklookupwas').hide();
+        $('#quicklookuptext').hide();
+    } else if (type == "iota") {
+        $('#quicklookupiota').show();
+        $('#quicklookupdxcc').hide();
+        $('#quicklookupcqz').hide();
+        $('#quicklookupwas').hide();
+        $('#quicklookuptext').hide();
+    } else if (type == "vucc" || type == "sota" || type == "wwff") {
+        $('#quicklookuptext').show();
+        $('#quicklookupiota').hide();
+        $('#quicklookupdxcc').hide();
+        $('#quicklookupcqz').hide();
+        $('#quicklookupwas').hide();
+    } else if (type == "cq") {
+        $('#quicklookupcqz').show();
+        $('#quicklookupiota').hide();
+        $('#quicklookupdxcc').hide();
+        $('#quicklookupwas').hide();
+        $('#quicklookuptext').hide();
+    } else if (type == "was") {
+        $('#quicklookupwas').show();
+        $('#quicklookupcqz').hide();
+        $('#quicklookupiota').hide();
+        $('#quicklookupdxcc').hide();
+        $('#quicklookuptext').hide();
+    }
 }
 
 // This function executes the call to the backend for fetching queryresult and displays the table in the dialog
@@ -466,6 +484,34 @@ function getDxccResult(dxcc, name) {
             $('.dxccsummary').remove();
             $('.qsopane').append('<div class="dxccsummary col-sm-12"><br><div class="card"><div class="card-header dxccsummaryheader" data-toggle="collapse" data-target=".dxccsummarybody">DXCC Summary for '+name+'</div><div class="card-body collapse dxccsummarybody"></div></div></div>');
             $('.dxccsummarybody').append(html);
+		}
+	});
+}
+
+function displayQsl(id) {
+    $.ajax({
+		url: base_url + 'index.php/qsl/viewQsl',
+		type: 'post',
+        data: {
+			id: id,
+		},
+		success: function (html) {
+			BootstrapDialog.show({
+				title: 'QSL Card',
+				size: BootstrapDialog.SIZE_WIDE,
+				cssClass: 'lookup-dialog',
+				nl2br: false,
+				message: html,
+				onshown: function(dialog) {
+
+				},
+				buttons: [{
+					label: 'Close',
+					action: function (dialogItself) {
+						dialogItself.close();
+					}
+				}]
+			});
 		}
 	});
 }
