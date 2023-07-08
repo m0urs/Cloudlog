@@ -71,7 +71,7 @@ function load_was_map() {
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/sections/continents.js"></script>
 <?php } ?>
 
-<?php if ($this->uri->segment(1) == "adif" || $this->uri->segment(1) == "qrz" || $this->uri->segment(1) == "webadif") { ?>
+<?php if ($this->uri->segment(1) == "adif" || $this->uri->segment(1) == "qrz" || $this->uri->segment(1) == "hrdlog" ||$this->uri->segment(1) == "webadif") { ?>
     <!-- Javascript used for ADIF Import and Export Areas -->
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/moment.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/tempusdominus-bootstrap-4.min.js"></script>
@@ -1702,6 +1702,9 @@ $(document).ready(function(){
         </script>
     <?php } ?>
 
+    <?php if ($this->uri->segment(1) == "hrdlog") { ?>
+		<script src="<?php echo base_url(); ?>assets/js/sections/hrdlog.js"></script>
+    <?php } ?>
     <?php if ($this->uri->segment(1) == "qrz") { ?>
 		<script src="<?php echo base_url(); ?>assets/js/sections/qrzlogbook.js"></script>
     <?php } ?>
@@ -2007,7 +2010,7 @@ $(document).ready(function(){
                 success: function (dataofconfirm) {
                     $(".edit-dialog").modal('hide');
                     $(".qso-dialog").modal('hide');
-                    <?php if ($this->uri->segment(1) != "search" && $this->uri->segment(2) != "filter" && $this->uri->segment(1) != "qso") { ?>location.reload();<?php } ?>
+                    <?php if ($this->uri->segment(1) != "search" && $this->uri->segment(2) != "filter" && $this->uri->segment(1) != "qso" && $this->uri->segment(1) != "logbookadvanced") { ?>location.reload();<?php } ?>
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);
