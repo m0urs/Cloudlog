@@ -389,15 +389,15 @@ $ci =& get_instance();
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                             <a class="dropdown-item" id="edit_qso" href="javascript:qso_edit(<?php echo $row->COL_PRIMARY_KEY; ?>)"><i class="fas fa-edit"></i> <?php echo lang('general_edit_qso'); ?></a>
 
-                            <!-- <?php if($row->COL_QSL_SENT !='Y') { ?> -->
+                            <?php if($row->COL_QSL_SENT !='XXX') { ?>
                                 <div class="qsl_sent_<?php echo $row->COL_PRIMARY_KEY; ?>">
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="javascript:qsl_sent(<?php echo $row->COL_PRIMARY_KEY; ?>, 'B')" ><i class="fas fa-envelope"></i> <?php echo lang('general_mark_qsl_tx_bureau'); ?></a>
                                     <a class="dropdown-item" href="javascript:qsl_sent(<?php echo $row->COL_PRIMARY_KEY; ?>, 'D')" ><i class="fas fa-envelope"></i> <?php echo lang('general_mark_qsl_tx_direct'); ?></a>
                                 </div>
-                            <!-- <?php } ?> -->
+                            <?php } ?>
 
-                            <!-- <?php if($row->COL_QSL_RCVD !='Y') { ?> -->
+                            <?php if($row->COL_QSL_RCVD !='XXX') { ?>
                                 <div class="qsl_rcvd_<?php echo $row->COL_PRIMARY_KEY; ?>">
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="javascript:qsl_rcvd(<?php echo $row->COL_PRIMARY_KEY; ?>, 'B')" ><i class="fas fa-envelope"></i> <?php echo lang('general_mark_qsl_rx_bureau'); ?></a>
@@ -407,7 +407,7 @@ $ci =& get_instance();
                                     <a class="dropdown-item" href="javascript:qsl_requested(<?php echo $row->COL_PRIMARY_KEY; ?>, 'D')" ><i class="fas fa-envelope"></i> Mark QSL Card Requested (Direct)</a>
                                     <a class="dropdown-item" href="javascript:qsl_ignore(<?php echo $row->COL_PRIMARY_KEY; ?>, 'D')" ><i class="fas fa-envelope"></i> Mark QSL Card Not Required</a>
                                 </div>
-                            <!-- <?php } ?> -->
+                            <?php } ?>
 
                             <div class="dropdown-divider"></div>
 
