@@ -11,7 +11,7 @@
                 <table width="100%">
                     <tr>
                         <td>Version</td>
-                        <td><?php echo $this->config->item('app_version')."\n"; ?></td>
+                        <td><?php echo $this->optionslib->get_option('version')."\n"; ?></td>
                     </tr>
                     <tr>
                         <td>Language</td>
@@ -37,6 +37,11 @@
                     <tr>
                         <td>PHP Version</td>
                         <td><?php echo phpversion(); ?></td>
+                    </tr>
+
+                    <tr>
+                        <td>MySQL Version</td>
+                        <td><?php echo $this->db->version(); ?></td>
                     </tr>
                 </table>
             </div>

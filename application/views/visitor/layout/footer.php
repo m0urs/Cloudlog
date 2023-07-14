@@ -23,7 +23,8 @@
 </script>
 
     <script type="text/javascript" src="<?php echo base_url();?>assets/js/leaflet/L.Maidenhead.js"></script>
-    <script id="leafembed" type="text/javascript" src="<?php echo base_url();?>assets/js/leaflet/leafembed.js" tileUrl="<?php echo $this->optionslib->get_option('map_tile_server');?>"></script>    <script type="text/javascript">
+    <script id="leafembed" type="text/javascript" src="<?php echo base_url();?>assets/js/leaflet/leafembed.js" tileUrl="<?php echo $this->optionslib->get_option('map_tile_server');?>"></script>
+    <script type="text/javascript">
       $(function () {
         $('[data-toggle="tooltip"]').tooltip()
       });
@@ -251,6 +252,22 @@
             // change color of csv-button if dark mode is chosen
             if (isDarkModeTheme()) {
                $('[class*="buttons"]').css("color", "white");
+            }
+        </script>
+        <script type="text/javascript">
+            $(function () {
+                $(document).on('shown.bs.tooltip', function (e) {
+                    setTimeout(function () {
+                        $(e.target).tooltip('hide');
+                    }, 3000);
+                });
+            });
+            function validateForm() {
+                let x = document.forms["searchForm"]["callsign"].value;
+                if (x.trim() == "") {
+                    $('#searchcall').tooltip('show')
+                    return false;
+                }
             }
         </script>
     <?php } ?>
