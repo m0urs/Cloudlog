@@ -65,7 +65,7 @@
                 <div class="form-group col-md-9">
                   <label for="callsign"><?php echo lang('gen_hamradio_callsign'); ?></label><?php if ($this->optionslib->get_option('dxcache_url') != '') { ?>&nbsp;<i id="check_cluster" data-toggle="tooltip" data-original-title="Search DXCluster for latest Spot" class="fas fa-search"></i> <?php } ?>
                   <input type="text" class="form-control" id="callsign" name="callsign" required>
-                  <small id="callsign_info" class="badge badge-secondary"></small> <small id="lotw_info" class="badge badge-success"></small>
+                  <small id="callsign_info" class="badge badge-secondary"></small> <a id="lotw_link"><small id="lotw_info" class="badge badge-success"></small></a>
                 </div>
                 <div class="form-group col-md-3 align-self-center">
                   <small id="qrz_info" class="badge badge-secondary"></small>
@@ -581,7 +581,7 @@
 
         <div id="partial_view" style="font-size: 0.95rem;"></div>
 
-        <div id="qso-last-table">
+        <div id="qso-last-table" hx-get="<?php echo site_url('/qso/component_past_contacts'); ?>"  hx-trigger="every 5s">
 
           <div class="table-responsive" style="font-size: 0.95rem;">
             <table class="table">
