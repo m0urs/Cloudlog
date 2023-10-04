@@ -252,7 +252,7 @@ function echoQrbCalcLink($mygrid, $grid, $vucc) {
                                     <a class="dropdown-item" href="javascript:qsl_requested(<?php echo $row->COL_PRIMARY_KEY; ?>, 'B')" ><i class="fas fa-envelope"></i> Mark QSL Requested (Bureau)</a>
                                     <a class="dropdown-item" href="javascript:qsl_requested(<?php echo $row->COL_PRIMARY_KEY; ?>, 'D')" ><i class="fas fa-envelope"></i> Mark QSL Requested (Direct)</a>
                                     <a class="dropdown-item" href="javascript:qsl_requested(<?php echo $row->COL_PRIMARY_KEY; ?>, 'E')" ><i class="fas fa-envelope"></i> Mark QSL Requested (Electronic)</a>
-                                    <a class="dropdown-item" href="javascript:qsl_ignore(<?php echo $row->COL_PRIMARY_KEY; ?>, 'D')" ><i class="fas fa-envelope"></i> Mark QSL Not Required</a>
+                                    <a class="dropdown-item" href="javascript:qsl_ignore(<?php echo $row->COL_PRIMARY_KEY; ?>, 'D')" ><i class="fas fa-envelope"></i> <?php echo lang('general_mark_qsl_not_required'); ?></a>
                                 </div>
                             <?php } ?>
 
@@ -267,9 +267,9 @@ function echoQrbCalcLink($mygrid, $grid, $vucc) {
 
                             <div class="dropdown-divider"></div>
 
-                            <a class="dropdown-item" href="https://www.qrz.com/db/<?php echo $row->COL_CALL; ?>" target="_blank"><i class="fas fa-question"></i> Lookup on QRZ</a>
+                            <a class="dropdown-item" href="https://www.qrz.com/db/<?php echo $row->COL_CALL; ?>" target="_blank"><i class="fas fa-question"></i> <?php echo lang('general_lookup_qrz'); ?></a>
 
-                            <a class="dropdown-item" href="https://www.hamqth.com/<?php echo $row->COL_CALL; ?>" target="_blank"><i class="fas fa-question"></i> Lookup on HamQTH</a>
+                            <a class="dropdown-item" href="https://www.hamqth.com/<?php echo $row->COL_CALL; ?>" target="_blank"><i class="fas fa-question"></i> <?php echo lang('general_lookup_hamqth'); ?></a>
 
                             <div class="dropdown-divider"></div>
 

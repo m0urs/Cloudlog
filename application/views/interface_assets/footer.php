@@ -947,7 +947,7 @@ $(document).on('keypress',function(e) {
 <?php if ($this->uri->segment(1) == "qso") { ?>
 
 <script src="<?php echo base_url() ;?>assets/js/sections/qso.js"></script>
-<?php if ($this->config->item('winkey')) { ?>
+<?php if ($this->session->userdata('isWinkeyEnabled')) { ?>
 	<script src="<?php echo base_url() ;?>assets/js/winkey.js"></script>
 <?php }
 
@@ -1793,7 +1793,7 @@ $(document).ready(function(){
 						message: html,
 						onshown: function(dialog) {
 							var qsoid = $("#qsoid").text();
-							$(".editButton").html('<a class="btn btn-primary" id="edit_qso" href="javascript:qso_edit('+qsoid+')"><i class="fas fa-edit"></i> Edit QSO</a>');
+							$(".editButton").html('<a class="btn btn-primary" id="edit_qso" href="javascript:qso_edit('+qsoid+')"><i class="fas fa-edit"></i><?php echo lang('general_edit_qso'); ?></a>');
 							var lat = $("#lat").text();
 							var long = $("#long").text();
 							var callsign = $("#callsign").text();
@@ -2249,7 +2249,9 @@ $(document).ready(function(){
         if (isDarkModeTheme()) {
             $('[class*="buttons"]').css("color", "white");
         }
-
+        $('#eqsl_force_from_date').datetimepicker({
+            format: 'YYYY/MM/DD',
+        });
 
     </script>
 <?php } ?>
