@@ -7,6 +7,9 @@ $lang['error_no_active_station_profile'] = 'Внимание: вам нужно 
 $lang['notice_turn_the_radio_on'] = 'За сегодня ни одного QSO, время вернуться к радио!';
 
 $lang['general_word_important'] = 'Важно';
+$lang['general_word_warning'] = 'Warning';
+$lang['general_word_danger'] = 'DANGER';
+$lang['general_word_maintenance'] = 'Maintenance';
 $lang['general_word_info'] = 'Информация';
 $lang['general_word_choose_file'] = 'Выберите файл';
 $lang['general_word_next'] = 'Next';
@@ -81,7 +84,6 @@ $lang['general_lookup_hamqth'] = 'Lookup on HamQTH';
 $lang['general_total_distance'] = 'Суммарная дистанция';
 
 // PHP Upload Warning
-$lang['general_word_warning'] = 'Warning';
 $lang['gen_max_file_upload_size'] = 'Maximum file upload size is ';
 
 // Cloudlog Terms
@@ -120,7 +122,9 @@ $lang['gen_hamradio_satellite_name'] = 'Название спутника';
 $lang['gen_hamradio_satellite_mode'] = 'Режим работы спутника';
 
 $lang['gen_hamradio_logbook'] = 'Журнал';
+$lang['gen_hamradio_zones'] = 'Zones';
 
+$lang['gen_hamradio_itu_zone'] = 'ITU Zone';
 $lang['gen_hamradio_cq_zone'] = 'CQ Zone';
 $lang['gen_hamradio_dxcc'] = 'DXCC';
 $lang['gen_hamradio_deleted_dxcc'] = 'Удалённые DXCC';
@@ -137,6 +141,7 @@ $lang['gen_hamradio_iota'] = 'IOTA';
 $lang['gen_hamradio_sota'] = 'SOTA';
 $lang['gen_hamradio_wwff'] = 'WWFF';
 $lang['gen_hamradio_pota'] = 'POTA';
+$lang['gen_hamradio_get_gridsquare'] = 'Get Gridsquare';
 $lang['gen_hamradio_gridsquare'] = 'Квадрат';
 $lang['gen_hamradio_distance'] = 'Дистанция';
 $lang['gen_hamradio_operator'] = 'Оператор';
@@ -144,10 +149,17 @@ $lang['gen_hamradio_operator'] = 'Оператор';
 $lang['gen_hamradio_sig'] = 'Sig';
 $lang['gen_hamradio_sig_info'] = 'Sig Info';
 
+// Find your CQ/ITU Zone
+$lang['gen_find_zone_cq_part1'] = "If you don't know your CQ Zone then ";
+$lang['gen_find_zone_itu_part1'] = "If you don't know your ITU Zone then ";
+$lang['gen_find_zone_part2'] = 'click here';
+$lang['gen_find_zone_part3'] = ' to find it!';
+
 // Dashboard Words
 $lang['dashboard_you_have_had'] = '';
 $lang['dashboard_qsos_today'] = 'QSOs сегодня!';
 $lang['dashboard_qso_breakdown'] = 'Статистика QSO';
+$lang['gen_to_date'] = 'To date';
 $lang['dashboard_countries_breakdown'] = 'Статистика по странам';
 
 $lang['gen_from_date'] = 'Начиная с даты';
