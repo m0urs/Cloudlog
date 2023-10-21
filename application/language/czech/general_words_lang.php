@@ -14,6 +14,10 @@ $lang['general_word_info'] = 'Info';
 $lang['general_word_choose_file'] = 'Vybrat soubor';
 $lang['general_word_next'] = 'Next';
 $lang['general_word_previous'] = 'Previous';
+$lang['general_word_enabled'] = "Enabled";
+$lang['general_word_disabled'] = "Disabled";
+$lang['general_word_export'] = "Export";
+$lang['general_word_import'] = "Import";
 
 $lang['general_word_date'] = 'Datum';
 $lang['general_word_time'] = 'Čas';
@@ -89,6 +93,7 @@ $lang['gen_max_file_upload_size'] = 'Maximum file upload size is ';
 $lang['cloudlog_station_profile'] = 'Umístění stanice';
 
 // ham radio terms
+$lang['gen_hamradio_cq'] = "CQ";
 $lang['gen_hamradio_qso'] = 'QSO';
 $lang['gen_hamradio_station'] = 'Stanice';
 
@@ -100,6 +105,7 @@ $lang['gen_hamradio_mode'] = 'Režim';
 $lang['gen_hamradio_rst_sent'] = 'Odesláno';
 $lang['gen_hamradio_rst_rcvd'] = 'Přijato';
 $lang['gen_hamradio_band'] = 'Pásmo';
+$lang['gen_hamradio_bandgroup'] = "Bandgroup";
 $lang['gen_hamradio_band_rx'] = 'Pásmo (RX)';
 $lang['gen_hamradio_frequency'] = 'Frekvence';
 $lang['gen_hamradio_frequency_rx'] = 'Frekvence (RX)';

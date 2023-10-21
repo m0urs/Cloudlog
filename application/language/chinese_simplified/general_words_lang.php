@@ -14,6 +14,10 @@ $lang['general_word_info'] = '消息';
 $lang['general_word_choose_file'] = '选择文件';
 $lang['general_word_next'] = 'Next';
 $lang['general_word_previous'] = 'Previous';
+$lang['general_word_enabled'] = "Enabled";
+$lang['general_word_disabled'] = "Disabled";
+$lang['general_word_export'] = "Export";
+$lang['general_word_import'] = "Import";
 
 $lang['general_word_date'] = '日期';
 $lang['general_word_time'] = '时间';
@@ -89,6 +93,7 @@ $lang['gen_max_file_upload_size'] = 'Maximum file upload size is ';
 $lang['cloudlog_station_profile'] = '台站地址';
 
 // ham radio terms
+$lang['gen_hamradio_cq'] = "CQ";
 $lang['gen_hamradio_qso'] = 'QSO';
 $lang['gen_hamradio_station'] = '台站';
 
@@ -100,6 +105,7 @@ $lang['gen_hamradio_mode'] = 'Mode';
 $lang['gen_hamradio_rst_sent'] = '发';
 $lang['gen_hamradio_rst_rcvd'] = '收';
 $lang['gen_hamradio_band'] = '频段';
+$lang['gen_hamradio_bandgroup'] = "Bandgroup";
 $lang['gen_hamradio_band_rx'] = '频段 (RX)';
 $lang['gen_hamradio_frequency'] = '频率';
 $lang['gen_hamradio_frequency_rx'] = '频率 (RX)';

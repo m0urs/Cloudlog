@@ -14,6 +14,10 @@ $lang['general_word_info'] = 'Информация';
 $lang['general_word_choose_file'] = 'Выберите файл';
 $lang['general_word_next'] = 'Next';
 $lang['general_word_previous'] = 'Previous';
+$lang['general_word_enabled'] = "Enabled";
+$lang['general_word_disabled'] = "Disabled";
+$lang['general_word_export'] = "Export";
+$lang['general_word_import'] = "Import";
 
 $lang['general_word_date'] = 'Дата';
 $lang['general_word_time'] = 'Время';
@@ -89,6 +93,7 @@ $lang['gen_max_file_upload_size'] = 'Maximum file upload size is ';
 // Cloudlog Terms
 $lang['cloudlog_station_profile'] = 'Месторасположение станции';
 
+$lang['gen_hamradio_cq'] = "CQ";
 // ham radio terms
 $lang['gen_hamradio_qso'] = 'QSO';
 $lang['gen_hamradio_station'] = 'Станция';
@@ -100,6 +105,7 @@ $lang['gen_hamradio_dx'] = 'Dx';
 $lang['gen_hamradio_mode'] = 'Вид модуляции';
 $lang['gen_hamradio_rst_sent'] = 'Отправлено';
 $lang['gen_hamradio_rst_rcvd'] = 'Получено';
+$lang['gen_hamradio_bandgroup'] = "Bandgroup";
 $lang['gen_hamradio_band'] = 'Диапазон';
 $lang['gen_hamradio_band_rx'] = 'Диапазон (RX)';
 $lang['gen_hamradio_frequency'] = 'Частота';

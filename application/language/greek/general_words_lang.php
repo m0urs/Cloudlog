@@ -14,6 +14,10 @@ $lang['general_word_info'] = 'Πληροφορίες';
 $lang['general_word_choose_file'] = 'Επιλογή αρχείου';
 $lang['general_word_next'] = 'Next';
 $lang['general_word_previous'] = 'Previous';
+$lang['general_word_enabled'] = "Enabled";
+$lang['general_word_disabled'] = "Disabled";
+$lang['general_word_export'] = "Export";
+$lang['general_word_import'] = "Import";
 
 $lang['general_word_date'] = 'Ημερομηνία';
 $lang['general_word_time'] = 'Ωρα';
@@ -89,6 +93,7 @@ $lang['gen_max_file_upload_size'] = 'Maximum file upload size is ';
 $lang['cloudlog_station_profile'] = 'Τοποθεσία Σταθμού';
 
 // ham radio terms
+$lang['gen_hamradio_cq'] = "CQ";
 $lang['gen_hamradio_qso'] = 'QSO';
 $lang['gen_hamradio_station'] = 'Σταθμός';
 
@@ -100,6 +105,7 @@ $lang['gen_hamradio_mode'] = 'Τρόπος';
 $lang['gen_hamradio_rst_sent'] = 'Απεσταλμένα';
 $lang['gen_hamradio_rst_rcvd'] = 'Ελήφθη\'d';
 $lang['gen_hamradio_band'] = 'Ζώνη';
+$lang['gen_hamradio_bandgroup'] = "Bandgroup";
 $lang['gen_hamradio_band_rx'] = 'Ζώνη (RX)';
 $lang['gen_hamradio_frequency'] = 'Συχνότητα';
 $lang['gen_hamradio_frequency_rx'] = 'Συχνότητα (RX)';

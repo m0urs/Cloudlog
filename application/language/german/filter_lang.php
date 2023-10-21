@@ -15,6 +15,7 @@ $lang['filter_filters'] = 'Filter';
 $lang['filter_actions'] = 'Aktionen';
 $lang['filter_results'] = '# Resultate';
 $lang['filter_search'] = 'Suche';
+$lang['filter_dupes'] = "Dupes";
 $lang['filter_map'] = 'Karte';
 $lang['filter_options'] = 'Optionen';
 $lang['filter_reset'] = 'Reset';
@@ -119,6 +120,7 @@ $lang['filter_actions_start_print'] = 'Druck starten bei?';
 $lang['filter_actions_print'] = 'Drucken';
 $lang['filter_actions_qsl_slideshow'] = 'QSL Präsentation';
 $lang['filter_actions_delete'] = 'Löschen';
+$lang['filter_actions_delete_warning'] = "Warnung! Bist du sicher, dass du die markierten QSO löschen willst?";
 
 
 /*

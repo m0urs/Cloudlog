@@ -14,6 +14,10 @@ $lang['general_word_info'] = 'Info';
 $lang['general_word_choose_file'] = 'Datei wählen';
 $lang['general_word_next'] = 'Weiter';
 $lang['general_word_previous'] = 'Zurück';
+$lang['general_word_enabled'] = "Eingeschaltet";
+$lang['general_word_disabled'] = "Ausgeschaltet";
+$lang['general_word_export'] = "Exportieren";
+$lang['general_word_import'] = "Importieren";
 
 $lang['general_word_date'] = 'Datum';
 $lang['general_word_time'] = 'Zeit';
@@ -89,6 +93,7 @@ $lang['gen_max_file_upload_size'] = 'Die max. Dateigrösse für Uploads beträgt
 $lang['cloudlog_station_profile'] = 'Stationsprofil';
 
 // ham radio terms
+$lang['gen_hamradio_cq'] = "CQ";
 $lang['gen_hamradio_qso'] = 'QSO';
 $lang['gen_hamradio_station'] = 'Station';
 
@@ -100,6 +105,7 @@ $lang['gen_hamradio_mode'] = 'Mode';
 $lang['gen_hamradio_rst_sent'] = 'Gegeben';
 $lang['gen_hamradio_rst_rcvd'] = 'Erhalten';
 $lang['gen_hamradio_band'] = 'Band';
+$lang['gen_hamradio_bandgroup'] = "Bandgruppe";
 $lang['gen_hamradio_band_rx'] = 'Band (RX)';
 $lang['gen_hamradio_frequency'] = 'Frequenz';
 $lang['gen_hamradio_frequency_rx'] = 'Frequenz (RX)';
@@ -159,7 +165,7 @@ $lang['dashboard_qso_breakdown'] = 'QSO-Übersicht';
 $lang['dashboard_countries_breakdown'] = 'Länderübersicht';
 
 $lang['gen_from_date'] = 'Ab Datum';
-$lang['gen_to_date'] = 'To date';
+$lang['gen_to_date'] = 'Bis Datum';
 
 $lang['gen_this_qso_was_confirmed_on'] = 'Dieses QSO wurde bestätigt am';
 

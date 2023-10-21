@@ -14,6 +14,10 @@ $lang['general_word_info'] = 'Bilgiler';
 $lang['general_word_choose_file'] = 'Dosya seç';
 $lang['general_word_next'] = 'Next';
 $lang['general_word_previous'] = 'Previous';
+$lang['general_word_enabled'] = "Enabled";
+$lang['general_word_disabled'] = "Disabled";
+$lang['general_word_export'] = "Export";
+$lang['general_word_import'] = "Import";
 
 $lang['general_word_date'] = 'Tarih';
 $lang['general_word_time'] = 'Saat';
@@ -89,6 +93,7 @@ $lang['gen_max_file_upload_size'] = 'Maximum file upload size is ';
 $lang['cloudlog_station_profile'] = 'İstasyon Konumu';
 
 // ham radio terms
+$lang['gen_hamradio_cq'] = "CQ";
 $lang['gen_hamradio_qso'] = 'QSO';
 $lang['gen_hamradio_station'] = 'İstasyon';
 
@@ -100,6 +105,7 @@ $lang['gen_hamradio_mode'] = 'Mod';
 $lang['gen_hamradio_rst_sent'] = 'Gönderilen';
 $lang['gen_hamradio_rst_rcvd'] = 'Alınan';
 $lang['gen_hamradio_band'] = 'Bant';
+$lang['gen_hamradio_bandgroup'] = "Bandgroup";
 $lang['gen_hamradio_band_rx'] = 'Bant (RX)';
 $lang['gen_hamradio_frequency'] = 'Frekans';
 $lang['gen_hamradio_frequency_rx'] = 'Frekans (RX)';
