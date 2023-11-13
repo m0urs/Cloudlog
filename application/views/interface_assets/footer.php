@@ -924,8 +924,8 @@ function searchButtonPress(){
 
 $(document).ready(function(){
 
-  <?php if($this->input->post('searchBar') != "") { ?>
-        $('#partial_view').load("logbook/search_result/<?php echo str_replace("Ø","0",$this->input->post('searchBar')); ?>", function() {
+  <?php if($this->input->post('callsign') != "") { ?>
+        $('#partial_view').load("logbook/search_result/<?php echo str_replace("Ø","0",$this->input->post('callsign')); ?>", function() {
            $('[data-toggle="tooltip"]').tooltip()
     });
   <?php } ?>
@@ -1406,8 +1406,12 @@ $(document).on('keypress',function(e) {
 						  $("#band_rx").val(frequencyToBand(data.frequency_rx));
 					  }
 
-					  old_mode = $(".mode").val();
-					  $(".mode").val(data.mode);
+					  if ((data.mode != "") && (data.mode != null)) {
+					  	old_mode = $(".mode").val();
+					  	$(".mode").val(data.mode);
+					  } else {
+					  	old_mode = $(".mode").val();
+					  }
 
 					  if (old_mode !== $(".mode").val()) {
 						  // Update RST on mode change via CAT
@@ -2300,6 +2304,7 @@ $(document).ready(function(){
 
     ?>
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/moment.min.js"></script>
+    <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/tempusdominus-bootstrap-4.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/datetime-moment.js"></script>
     <script>
         $.fn.dataTable.moment('<?php echo $usethisformat ?>');
@@ -2335,7 +2340,7 @@ $(document).ready(function(){
             $('[class*="buttons"]').css("color", "white");
         }
         $('#eqsl_force_from_date').datetimepicker({
-            format: 'YYYY/MM/DD',
+            format: 'YYYY/MM/DD'
         });
 
     </script>
