@@ -45,6 +45,7 @@ $lang['menu_sota'] = 'SOTA';
 $lang['menu_us_counties'] = 'US Counties';
 $lang['menu_us_gridmaster'] = 'US Gridmaster';
 $lang['menu_vucc'] = 'VUCC';
+$lang['menu_waja'] = 'WAJA';
 $lang['menu_was'] = 'WAS';
 $lang['menu_wwff'] = 'WWFF';
 
@@ -88,6 +89,6 @@ $lang['menu_help'] = '帮助';
 $lang['menu_forum'] = '论坛';
 $lang['menu_logout'] = '注销';
 
-$lang['menu_ffma'] = "Fred Fish Memorial Award";
+$lang['menu_ffma'] = "弗雷德·菲什纪念奖";
 $lang['menu_ja_gridmaster'] = 'JA Gridmaster';
 $lang['menu_maintenance']='维护';

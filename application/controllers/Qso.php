@@ -46,7 +46,14 @@ class QSO extends CI_Controller {
 		$this->form_validation->set_rules('start_date', 'Date', 'required');
 		$this->form_validation->set_rules('start_time', 'Time', 'required');
 		$this->form_validation->set_rules('callsign', 'Callsign', 'required');
+		$this->form_validation->set_rules('band', 'Band', 'required');
+		$this->form_validation->set_rules('mode', 'Mode', 'required');
 		$this->form_validation->set_rules('locator', 'Locator', 'callback_check_locator');
+
+        // [eQSL default msg] GET user options (option_type='eqsl_default_qslmsg'; option_name='key_station_id'; option_key=station_id) //
+		$this->load->model('user_options_model');
+		$options_object = $this->user_options_model->get_options('eqsl_default_qslmsg',array('option_name'=>'key_station_id','option_key'=>$data['active_station_profile']))->result();
+		$data['qslmsg'] = (isset($options_object[0]->option_value))?$options_object[0]->option_value:'';
 
 		if ($this->form_validation->run() == FALSE)
 		{

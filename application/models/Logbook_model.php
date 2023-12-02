@@ -260,6 +260,13 @@ class Logbook_model extends CI_Model {
       $station = $this->check_station($station_id);
         $data['station_id'] = $station_id;
 
+        // [eQSL default msg] add info to QSO for Contest or SFLE //
+        if (empty($data['COL_QSLMSG']) && (($this->input->post('isSFLE')==true) || (!empty($data['COL_CONTEST_ID'])))) {
+          $this->load->model('user_options_model');
+          $options_object = $this->user_options_model->get_options('eqsl_default_qslmsg',array('option_name'=>'key_station_id','option_key'=>$station_id))->result();
+          $data['COL_QSLMSG'] = (isset($options_object[0]->option_value))?$options_object[0]->option_value:'';
+        }
+
       if (strpos(trim($station['station_gridsquare']), ',') !== false) {
         $data['COL_MY_VUCC_GRIDS'] = strtoupper(trim($station['station_gridsquare']));
       } else {
@@ -378,6 +385,10 @@ class Logbook_model extends CI_Model {
 			break;
 		case 'DOK':
 			$this->db->where('COL_DARC_DOK', $searchphrase);
+			break;
+		case 'WAJA':
+			$this->db->where('COL_STATE', $searchphrase);
+			$this->db->where_in('COL_DXCC', ['339']);
 			break;
 		case 'QSLRDATE':
 			$this->db->where('date(COL_QSLRDATE)=date(SYSDATE())');
@@ -565,6 +576,20 @@ class Logbook_model extends CI_Model {
 	if (!$skipexport) {
 
 
+		$result = $this->exists_clublog_credentials($data['station_id']);
+		if (isset($result->ucp) && isset($result->ucn) && (($result->ucp ?? '') != '') && (($result->ucn ?? '') != '') && ($result->clublogrealtime == 1)) {
+			$CI =& get_instance();
+			$CI->load->library('AdifHelper');
+			$qso = $this->get_qso($last_id,true)->result();
+
+			$adif = $CI->adifhelper->getAdifLine($qso[0]);
+			$result = $this->push_qso_to_clublog($result->ucn, $result->ucp, $data['COL_STATION_CALLSIGN'], $adif);
+			if ( ($result['status'] == 'OK') || ( ($result['status'] == 'error') || ($result['status'] == 'duplicate') || ($result['status'] == 'auth_error') )){
+		  		$this->mark_clublog_qsos_sent($last_id);
+			}
+		}
+
+		$result = '';
 		$result = $this->exists_hrdlog_code($data['station_id']);
 		// Push qso to hrdlog if code is set, and realtime upload is enabled, and we're not importing an adif-file
 		if (isset($result->hrdlog_code) && $result->hrdlogrealtime == 1) {
@@ -619,9 +644,9 @@ class Logbook_model extends CI_Model {
    */
   function exists_hrdlog_code($station_id) {
 	  $sql = 'select hrdlog_code, hrdlogrealtime from station_profile
-		  where station_id = ' . $station_id;
+		  where station_id = ?';
 
-	  $query = $this->db->query($sql);
+	  $query = $this->db->query($sql,$station_id);
 
 	  $result = $query->row();
 
@@ -633,13 +658,31 @@ class Logbook_model extends CI_Model {
   }
 
   /*
+   * Function checks if a Clublog Credebtials exists in the table with the given station id
+  */
+  function exists_clublog_credentials($station_id) {
+      $sql = 'select auth.user_clublog_name ucn, auth.user_clublog_password ucp, prof.clublogrealtime from '.$this->config->item('auth_table').' auth inner join station_profile prof on (auth.user_id=prof.user_id) where prof.station_id = ? and prof.clublogrealtime=1';
+
+      $query = $this->db->query($sql, $station_id);
+
+      $result = $query->row();
+
+      if ($result) {
+          return $result;
+      } else {
+          return false;
+      }
+  }
+
+
+  /*
    * Function checks if a QRZ API Key exists in the table with the given station id
   */
   function exists_qrz_api_key($station_id) {
       $sql = 'select qrzapikey, qrzrealtime from station_profile
-            where station_id = ' . $station_id;
+            where station_id = ?';
 
-      $query = $this->db->query($sql);
+      $query = $this->db->query($sql, $station_id);
 
       $result = $query->row();
 
@@ -654,21 +697,54 @@ class Logbook_model extends CI_Model {
 	/*
 	 * Function checks if a WebADIF API Key exists in the table with the given station id
 	*/
-	function exists_webadif_api_key($station_id) {
-		$sql = 'select webadifapikey, webadifapiurl, webadifrealtime from station_profile
-            where station_id = ' . $station_id;
+  function exists_webadif_api_key($station_id) {
+	  $sql = 'select webadifapikey, webadifapiurl, webadifrealtime from station_profile
+		  where station_id = ?';
 
-		$query = $this->db->query($sql);
+	  $query = $this->db->query($sql, $station_id);
 
-		$result = $query->row();
+	  $result = $query->row();
 
-		if ($result) {
-			return $result;
-		}
-		else {
-			return false;
-		}
-	}
+	  if ($result) {
+		  return $result;
+	  }
+	  else {
+		  return false;
+	  }
+  }
+
+  function push_qso_to_clublog($cl_username, $cl_password, $station_callsign, $adif) {
+
+	  // initialise the curl request
+	  $returner=[];
+	  $request = curl_init('https://clublog.org/realtime.php');
+
+	  curl_setopt($request, CURLOPT_POST, true);
+	  curl_setopt(
+		  $request,
+		  CURLOPT_POSTFIELDS,
+		  array(
+			  'email' => $cl_username,
+			  'password' => $cl_password,
+			  'callsign' => $station_callsign,
+			  'adif' => $adif,
+			  'api' => "a11c3235cd74b88212ce726857056939d52372bd",
+		  ));
+
+	  // output the response
+	  curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+	  $response = curl_exec($request);
+	  $info = curl_getinfo($request);
+
+	  // If Clublog Accepts mark the QSOs
+	  if (preg_match('/\bOK\b/', $response)) {
+		  $returner['status']='OK';
+	  } else {
+		  $returner['status']=$response;
+	  }
+	  curl_close ($request);
+	  return ($returner);
+  }
 
   /*
    * Function uploads a QSO to HRDLog with the API given.
@@ -794,6 +870,24 @@ class Logbook_model extends CI_Model {
 		curl_close($ch);
 		return $response === 200;
 	}
+
+  /*
+   * Function marks QSOs as uploaded to Clublog
+   * $primarykey is the unique id for that QSO in the logbook
+   */
+  function mark_clublog_qsos_sent($primarykey) {
+	  $data = array(
+		  'COL_CLUBLOG_QSO_UPLOAD_DATE' => date("Y-m-d H:i:s", strtotime("now")),
+		  'COL_CLUBLOG_QSO_UPLOAD_STATUS' => 'Y',
+	  );
+
+	  $this->db->where('COL_PRIMARY_KEY', $primarykey);
+
+	  $this->db->update($this->config->item('table_name'), $data);
+
+	  return true;
+  }
+
 
   /*
    * Function marks QSOs as uploaded to HRDLog.
@@ -4011,11 +4105,7 @@ function check_if_callsign_worked_in_logbook($callsign, $StationLocationsArray =
         // get all records with no COL_GRIDSQUARE
         $this->db->select("COL_PRIMARY_KEY, COL_CALL, COL_TIME_ON, COL_TIME_OFF");
 
-        // check which to update - records with no Gridsquare or all records
-        $this->db->where("COL_GRIDSQUARE is NULL or COL_GRIDSQUARE = ''");
-
-        $where = "(COL_GRIDSQUARE is NULL or COL_GRIDSQUARE = '') AND (COL_VUCC_GRIDS is NULL or COL_VUCC_GRIDS = '')";
-        $this->db->where($where);
+        $this->db->where("(COL_GRIDSQUARE is NULL or COL_GRIDSQUARE = '') AND (COL_VUCC_GRIDS is NULL or COL_VUCC_GRIDS = '')");
 
         $r = $this->db->get($this->config->item('table_name'));
 
@@ -4023,11 +4113,13 @@ function check_if_callsign_worked_in_logbook($callsign, $StationLocationsArray =
         $this->db->trans_start();
         if ($r->num_rows() > 0){
             foreach($r->result_array() as $row){
-		          $callsign = $row['COL_CALL'];
+              $callsign = $row['COL_CALL'];
               if ($this->config->item('callbook') == "qrz" && $this->config->item('qrz_username') != null && $this->config->item('qrz_password') != null)
               {
                   // Lookup using QRZ
-                  $this->load->library('qrz');
+                  if(!$this->load->is_loaded('qrz')) {
+                     $this->load->library('qrz');
+                  }
 
                   if(!$this->session->userdata('qrz_session_key')) {
                       $qrz_session_key = $this->qrz->session($this->config->item('qrz_username'), $this->config->item('qrz_password'));
@@ -4040,7 +4132,9 @@ function check_if_callsign_worked_in_logbook($callsign, $StationLocationsArray =
               if ($this->config->item('callbook') == "hamqth" && $this->config->item('hamqth_username') != null && $this->config->item('hamqth_password') != null)
               {
                   // Load the HamQTH library
-                  $this->load->library('hamqth');
+                  if(!$this->load->is_loaded('hamqth')) {
+                     $this->load->library('hamqth');
+                  }
 
                   if(!$this->session->userdata('hamqth_session_key')) {
                       $hamqth_session_key = $this->hamqth->session($this->config->item('hamqth_username'), $this->config->item('hamqth_password'));
@@ -4058,14 +4152,18 @@ function check_if_callsign_worked_in_logbook($callsign, $StationLocationsArray =
               }
               if (isset($callbook))
               {
-                  $return['callsign_qra'] = $callbook['gridsquare'];
-              }
-              if ($return['callsign_qra'] != ''){
-                  $sql = sprintf("update %s set COL_GRIDSQUARE = '%s' where COL_PRIMARY_KEY=%d",
-                                  $this->config->item('table_name'), $return['callsign_qra'], $row['COL_PRIMARY_KEY']);
-                  $this->db->query($sql);
-                  printf("Updating %s to %s\n<br/>", $row['COL_PRIMARY_KEY'], $return['callsign_qra']);
-                  $count++;
+                  if (isset($callbook['error'])) {
+                     printf("Error: ".$callbook['error']."<br />");
+                  } else {
+                     $return['callsign_qra'] = $callbook['gridsquare'];
+                     if ($return['callsign_qra'] != ''){
+                         $sql = sprintf("update %s set COL_GRIDSQUARE = '%s' where COL_PRIMARY_KEY=%d",
+                                         $this->config->item('table_name'), $return['callsign_qra'], $row['COL_PRIMARY_KEY']);
+                         $this->db->query($sql);
+                         printf("Updating %s to %s\n<br/>", $row['COL_PRIMARY_KEY'], $return['callsign_qra']);
+                         $count++;
+                     }
+                  }
               }
             }
         }

@@ -12,7 +12,7 @@
 </script>
 
 <script>
-    /* 
+    /*
     General Language
     */
     var lang_general_word_qso_data = "<?php echo lang('general_word_qso_data'); ?>";
@@ -78,7 +78,7 @@ function load_was_map() {
                 type: 'POST',
             });
         });
-        
+
     </script>
 <?php } ?>
 
@@ -149,7 +149,6 @@ function load_was_map() {
     <script>
         var position;
         function getLocation() {
-            console.log("'clicked");
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition);
             } else {
@@ -762,7 +761,7 @@ function showActivatorsMap(call, count, grids) {
 <?php if ($this->uri->segment(1) == "" || $this->uri->segment(1) == "dashboard" ) { ?>
     <script type="text/javascript" src="<?php echo base_url();?>assets/js/leaflet/L.Maidenhead.js"></script>
     <script id="leafembed" type="text/javascript" src="<?php echo base_url();?>assets/js/leaflet/leafembed.js" tileUrl="<?php echo $this->optionslib->get_option('option_map_tile_server');?>"></script>
-    
+
     <script type="text/javascript">
       $(function () {
         $('[data-bs-toggle="tooltip"]').tooltip()
@@ -1239,7 +1238,11 @@ $(document).on('keypress',function(e) {
 				$('#transmit_power').val('');
 			},
 		});
+        // [eQSL default msg] change value on change station profle //
+        qso_set_eqsl_qslmsg(stationProfile,false,'.qso_panel');
 	});
+    // [eQSL default msg] change value on clic //
+    $('.qso_panel .qso_eqsl_qslmsg_update').off('click').on('click',function() { qso_set_eqsl_qslmsg($('.qso_panel #stationProfile').val(),true,'.qso_panel'); });
 
 <?php if ($this->session->userdata('user_qth_lookup') == 1) { ?>
     $('#qth').focusout(function() {
@@ -1588,8 +1591,6 @@ $(document).ready(function(){
     var lng = LatLng.lng;
     var locator = LatLng2Loc(lat,lng, 10);
     var loc_4char = locator.substring(0, 4);
-    console.log(loc_4char);
-    console.log(map.getZoom());
 
     if(map.getZoom() > 2) {
     	<?php if ($this->session->userdata('user_callsign')) { ?>
@@ -1731,8 +1732,6 @@ $(document).ready(function(){
     var lng = LatLng.lng;
     var locator = LatLng2Loc(lat,lng, 10);
     var loc_4char = locator.substring(0, 4);
-    console.log(loc_4char);
-    console.log(map.getZoom());
 
     if(map.getZoom() > 2) {
     	<?php if ($this->session->userdata('user_callsign')) { ?>
@@ -1888,6 +1887,40 @@ $(document).ready(function(){
 <?php if ($this->uri->segment(2) == "dxcc") { ?>
 <script>
     $('.tabledxcc').DataTable({
+        "pageLength": 25,
+        responsive: false,
+        ordering: false,
+        "scrollY":        "400px",
+        "scrollCollapse": true,
+        "paging":         false,
+        "scrollX": true,
+        dom: 'Bfrtip',
+        buttons: [
+            'csv'
+        ]
+    });
+
+    $('.tablesummary').DataTable({
+        info: false,
+        searching: false,
+        ordering: false,
+        "paging":         false,
+        dom: 'Bfrtip',
+        buttons: [
+            'csv'
+        ]
+    });
+
+    // change color of csv-button if dark mode is chosen
+    if (isDarkModeTheme()) {
+        $(".buttons-csv").css("color", "white");
+    }
+ </script>
+    <?php } ?>
+
+<?php if ($this->uri->segment(2) == "waja") { ?>
+<script>
+    $('.tablewaja').DataTable({
         "pageLength": 25,
         responsive: false,
         ordering: false,
@@ -3014,6 +3047,31 @@ function viewEqsl(picture, callsign) {
         </script>
     <?php } ?>
 <?php } ?>
+
+<?php if (($this->uri->segment(1) == "user") && ($this->uri->segment(2) == "edit")) { ?>
+    <!-- [MAP Custom] select list with icons -->
+    <script>
+        $(document).ready(function(){
+            $('.icon_selectBox').off('click').on('click', function(){
+                var boxcontent = $(this).attr('data-boxcontent');
+                if ($('.icon_selectBox_data[data-boxcontent="'+boxcontent+'"]').is(":hidden")) { $('.icon_selectBox_data[data-boxcontent="'+boxcontent+'"]').show(); } else { $('.icon_selectBox_data[data-boxcontent="'+boxcontent+'"]').hide(); }
+            });
+            $('.icon_selectBox_data').off('mouseleave').on('mouseleave', function(){ if ($(this).is(":visible")) { $(this).hide(); } });
+            $('.icon_selectBox_data label').off('click').on('click', function(){ 
+                var boxcontent = $(this).closest('.icon_selectBox_data').attr('data-boxcontent');
+                $('input[name="user_map_'+boxcontent+'_icon"]').attr('value',$(this).attr('data-value'));
+                if ($(this).attr('data-value') != "0") { 
+                    $('.user_icon_color[data-icon="'+boxcontent+'"]').show();
+                    $('.icon_selectBox[data-boxcontent="'+boxcontent+'"] .icon_overSelect').html($(this).html());
+                } else {
+                    $('.user_icon_color[data-icon="'+boxcontent+'"]').hide();
+                    $('.icon_selectBox[data-boxcontent="'+boxcontent+'"] .icon_overSelect').html($(this).html().substring(0,10)+'.');
+                }
+                $('.icon_selectBox_data[data-boxcontent="'+boxcontent+'"]').hide();
+            }); 
+        });
+    </script>
+<?php } ?> 
 
 <?php
 if (isset($scripts) && is_array($scripts)){
