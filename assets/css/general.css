@@ -602,13 +602,6 @@ div#station_logbooks_linked_table_paginate {
 	position: absolute;
 }
 
-table.dataTable thead th,
-table.dataTable thead td,
-table.dataTable tfoot th,
-table.dataTable tfoot td {
-	text-align: center !important;
-}
-
 .red {
 	color: var(--red);
 }
@@ -651,4 +644,8 @@ table.dataTable tfoot td {
 }
 .icon_selectBox_data label:hover { 
 	background-color:var(--bs-primary); 
+}
+
+.inputError {
+	border: 2px solid rgb(217, 83, 79);
 }
