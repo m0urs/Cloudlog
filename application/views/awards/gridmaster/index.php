@@ -65,7 +65,7 @@
 
 
 <div id="gridmapcontainer">
-	<div id="gridsquare_map" style="width: 100%; height: 800px"></div>
+	<div id="gridsquare_map" class="map-leaflet" style="width: 100%; height: 800px"></div>
 </div>
 <div class="coordinates d-flex">
         <div class="cohidden"><?php echo lang('gen_hamradio_latitude')?>: </div>
@@ -81,6 +81,7 @@
 </div>
 <script>var gridsquaremap = true;
 var type = "worked";
+var dxcc = '<?php echo $dxcc; ?>';
 <?php
     echo 'var jslayer ="' . $layer .'";';
     echo "var jsattribution ='" . $attribution . "';";

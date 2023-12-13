@@ -442,6 +442,11 @@ class Awards extends CI_Controller {
 	}
 
     public function was() {
+		$footerData = [];
+		$footerData['scripts'] = [
+			'assets/js/sections/wasmap.js?' . filemtime(realpath(__DIR__ . "/../../assets/js/sections/wasmap.js"))
+		];
+
         $this->load->model('was');
 		$this->load->model('modes');
         $this->load->model('bands');
@@ -491,7 +496,7 @@ class Awards extends CI_Controller {
         $data['page_title'] = "Awards - WAS (Worked All States)";
         $this->load->view('interface_assets/header', $data);
         $this->load->view('awards/was/index');
-        $this->load->view('interface_assets/footer');
+        $this->load->view('interface_assets/footer', $footerData);
     }
 
     public function iota ()	{
@@ -597,8 +602,9 @@ class Awards extends CI_Controller {
         $this->load->view('awards/details', $data);
     }
 
-    public function gridmaster() {
-      $data['page_title'] = "Awards - US Gridmaster";
+    public function gridmaster($dxcc) {
+      $dxcc = $this->security->xss_clean($dxcc);
+      $data['page_title'] = "Awards - ".strtoupper($dxcc)." Gridmaster";
 
       $this->load->model('bands');
       $this->load->model('gridmap_model');
@@ -619,15 +625,17 @@ class Awards extends CI_Controller {
       $data['gridsquares_gridsquares_lotw']= lang('gridsquares_gridsquares_lotw');
       $data['gridsquares_gridsquares_paper']= lang('gridsquares_gridsquares_paper');
 
+      $indexData['dxcc'] = $dxcc;
+
       $footerData = [];
       $footerData['scripts']= [
          'assets/js/leaflet/geocoding.js',
          'assets/js/leaflet/L.MaidenheadColouredGridmasterMap.js',
-         'assets/js/sections/gridmaster.js?'
+         'assets/js/sections/gridmaster.js'
       ];
 
       $this->load->view('interface_assets/header',$data);
-      $this->load->view('awards/gridmaster/index');
+      $this->load->view('awards/gridmaster/index',$indexData);
       $this->load->view('interface_assets/footer',$footerData);
     }
 
@@ -648,122 +656,20 @@ class Awards extends CI_Controller {
 		$data['gridsquares_gridsquares_worked']= lang('gridsquares_gridsquares_worked');
 		$data['gridsquares_gridsquares_lotw']= lang('gridsquares_gridsquares_lotw');
 		$data['gridsquares_gridsquares_paper']= lang('gridsquares_gridsquares_paper');
+		$data['grid_count'] = $this->ffma_model->get_grid_count();
+		$data['grids'] = $this->ffma_model->get_grids();
 
 		$footerData = [];
 		$footerData['scripts']= [
 		   'assets/js/leaflet/geocoding.js',
 		   'assets/js/leaflet/L.MaidenheadColouredGridmasterMap.js',
-		   'assets/js/sections/ffma.js?'
+		   'assets/js/sections/ffma.js'
 		];
 
 		$this->load->view('interface_assets/header',$data);
 		$this->load->view('awards/ffma/index');
 		$this->load->view('interface_assets/footer',$footerData);
 	  }
-
-	public function ja_gridmaster() {
-		$data['page_title']= lang('menu_ja_gridmaster');
-
-		$this->load->model('bands');
-		$this->load->model('ja_gridmaster_model');
-		$this->load->model('stations');
-
-		$data['homegrid']= explode(',', $this->stations->find_gridsquare());
-
-		$data['layer']= $this->optionslib->get_option('option_map_tile_server');
-
-		$data['attribution']= $this->optionslib->get_option('option_map_tile_server_copyright');
-
-		$data['gridsquares_gridsquares']= lang('gridsquares_gridsquares');
-		$data['gridsquares_gridsquares_worked']= lang('gridsquares_gridsquares_worked');
-		$data['gridsquares_gridsquares_lotw']= lang('gridsquares_gridsquares_lotw');
-		$data['gridsquares_gridsquares_paper']= lang('gridsquares_gridsquares_paper');
-
-		$footerData = [];
-		$footerData['scripts']= [
-		   'assets/js/leaflet/geocoding.js',
-		   'assets/js/leaflet/L.MaidenheadColouredJaGridmasterMap.js',
-		   'assets/js/sections/ja_gridmaster.js?'
-		];
-
-		$this->load->view('interface_assets/header',$data);
-		$this->load->view('awards/ja_gridmaster/index');
-		$this->load->view('interface_assets/footer',$footerData);
-	}
-
-	public function getJaGridmasterGridsjs() {
-		$this->load->model('ja_gridmaster_model');
-
-		$array_grid_4char = array();
-		$array_grid_4char_lotw = array();
-		$array_grid_4char_paper = array();
-
-		$grid_4char = "";
-		$grid_4char_lotw = "";
-
-		$query = $this->ja_gridmaster_model->get_lotw();
-		if ($query && $query->num_rows() > 0) {
-			foreach ($query->result() as $row) 	{
-				$grid_4char_lotw = strtoupper(substr($row->GRID_SQUARES,0,4));
-				if(!in_array($grid_4char_lotw, $array_grid_4char_lotw)){
-					array_push($array_grid_4char_lotw, $grid_4char_lotw);
-				}
-			}
-		}
-
-		$query = $this->ja_gridmaster_model->get_paper();
-		if ($query && $query->num_rows() > 0) {
-			foreach ($query->result() as $row) 	{
-				$grid_4char_paper = strtoupper(substr($row->GRID_SQUARES,0,4));
-				if(!in_array($grid_4char_paper, $array_grid_4char_paper)){
-					array_push($array_grid_4char_paper, $grid_4char_paper);
-				}
-			}
-		}
-
-		$query = $this->ja_gridmaster_model->get_worked();
-		if ($query && $query->num_rows() > 0) {
-			foreach ($query->result() as $row) {
-				$grid_four = strtoupper(substr($row->GRID_SQUARES,0,4));
-				if(!in_array($grid_four, $array_grid_4char)){
-					array_push($array_grid_4char, $grid_four);
-				}
-			}
-		}
-
-		$vucc_grids = $this->ja_gridmaster_model->get_vucc_lotw();
-		foreach($vucc_grids as $key) {
-			$grid_four_lotw = strtoupper(substr($key,0,4));
-			if(!in_array($grid_four_lotw, $array_grid_4char_lotw)){
-				array_push($array_grid_4char_lotw, $grid_four_lotw);
-			}
-		}
-
-		$vucc_grids = $this->ja_gridmaster_model->get_vucc_paper();
-		foreach($vucc_grids as $key) {
-			$grid_four_paper = strtoupper(substr($key,0,4));
-			if(!in_array($grid_four_paper, $array_grid_4char_paper)){
-				array_push($array_grid_4char_paper, $grid_four_paper);
-			}
-		}
-
-		$vucc_grids = $this->ja_gridmaster_model->get_vucc_worked();
-		foreach($vucc_grids as $key) {
-			$grid_four = strtoupper(substr($key,0,4));
-			if(!in_array($grid_four, $array_grid_4char)){
-				array_push($array_grid_4char, $grid_four);
-			}
-		}
-
-		$data['grid_4char_lotw'] = ($array_grid_4char_lotw);
-		$data['grid_4char_paper'] = ($array_grid_4char_paper);
-		$data['grid_4char'] = ($array_grid_4char);
-		$data['grid_count'] = $this->ja_gridmaster_model->get_grid_count();
-		$data['grids'] = $this->ja_gridmaster_model->get_grids();
-
-		header('Content-Type: application/json');
-		echo json_encode($data);
-	}
 
 	public function getFfmaGridsjs() {
 		$this->load->model('ffma_model');
@@ -832,13 +738,17 @@ class Awards extends CI_Controller {
 		$data['grid_4char_lotw'] = ($array_grid_4char_lotw);
 		$data['grid_4char_paper'] = ($array_grid_4char_paper);
 		$data['grid_4char'] = ($array_grid_4char);
+		$data['grid_count'] = $this->ffma_model->get_grid_count();
+		$data['grids'] = $this->ffma_model->get_grids();
 
 		header('Content-Type: application/json');
 		echo json_encode($data);
 	}
 
-	public function getGridmasterGridsjs() {
+	public function getGridmasterGridsjs($dxcc) {
 		$this->load->model('gridmaster_model');
+
+		$dxcc = $this->security->xss_clean($dxcc);
 
 		$array_grid_4char = array();
 		$array_grid_4char_lotw = array();
@@ -847,7 +757,7 @@ class Awards extends CI_Controller {
 		$grid_4char = "";
 		$grid_4char_lotw = "";
 
-		$query = $this->gridmaster_model->get_lotw();
+		$query = $this->gridmaster_model->get_lotw($dxcc);
 		if ($query && $query->num_rows() > 0) {
 			foreach ($query->result() as $row) 	{
 				$grid_4char_lotw = strtoupper(substr($row->GRID_SQUARES,0,4));
@@ -857,7 +767,7 @@ class Awards extends CI_Controller {
 			}
 		}
 
-		$query = $this->gridmaster_model->get_paper();
+		$query = $this->gridmaster_model->get_paper($dxcc);
 		if ($query && $query->num_rows() > 0) {
 			foreach ($query->result() as $row) 	{
 				$grid_4char_paper = strtoupper(substr($row->GRID_SQUARES,0,4));
@@ -867,7 +777,7 @@ class Awards extends CI_Controller {
 			}
 		}
 
-		$query = $this->gridmaster_model->get_worked();
+		$query = $this->gridmaster_model->get_worked($dxcc);
 		if ($query && $query->num_rows() > 0) {
 			foreach ($query->result() as $row) {
 				$grid_four = strtoupper(substr($row->GRID_SQUARES,0,4));
@@ -877,7 +787,7 @@ class Awards extends CI_Controller {
 			}
 		}
 
-		$vucc_grids = $this->gridmaster_model->get_vucc_lotw();
+		$vucc_grids = $this->gridmaster_model->get_vucc_lotw($dxcc);
 		foreach($vucc_grids as $key) {
 			$grid_four_lotw = strtoupper(substr($key,0,4));
 			if(!in_array($grid_four_lotw, $array_grid_4char_lotw)){
@@ -885,7 +795,7 @@ class Awards extends CI_Controller {
 			}
 		}
 
-		$vucc_grids = $this->gridmaster_model->get_vucc_paper();
+		$vucc_grids = $this->gridmaster_model->get_vucc_paper($dxcc);
 		foreach($vucc_grids as $key) {
 			$grid_four_paper = strtoupper(substr($key,0,4));
 			if(!in_array($grid_four_paper, $array_grid_4char_paper)){
@@ -893,7 +803,7 @@ class Awards extends CI_Controller {
 			}
 		}
 
-		$vucc_grids = $this->gridmaster_model->get_vucc_worked();
+		$vucc_grids = $this->gridmaster_model->get_vucc_worked($dxcc);
 		foreach($vucc_grids as $key) {
 			$grid_four = strtoupper(substr($key,0,4));
 			if(!in_array($grid_four, $array_grid_4char)){
@@ -904,6 +814,11 @@ class Awards extends CI_Controller {
 		$data['grid_4char_lotw'] = ($array_grid_4char_lotw);
 		$data['grid_4char_paper'] = ($array_grid_4char_paper);
 		$data['grid_4char'] = ($array_grid_4char);
+		$data['grid_count'] = $this->gridmaster_model->get_grid_count($dxcc);
+		$data['grids'] = $this->gridmaster_model->get_grids($dxcc);
+		$data['lat'] = $this->gridmaster_model->get_lat($dxcc);
+		$data['lon'] = $this->gridmaster_model->get_lon($dxcc);
+		$data['zoom'] = $this->gridmaster_model->get_zoom($dxcc);
 
 		header('Content-Type: application/json');
 		echo json_encode($data);
@@ -964,28 +879,53 @@ class Awards extends CI_Controller {
 
         This displays the WAS map and requires the $band_type and $mode_type
     */
-    public function was_map($band_type, $mode_type) {
+    public function was_map() {
+		$stateString = 'AK,AL,AR,AZ,CA,CO,CT,DE,FL,GA,HI,IA,ID,IL,IN,KS,KY,LA,MA,MD,ME,MI,MN,MO,MS,MT,NC,ND,NE,NH,NJ,NM,NV,NY,OH,OK,OR,PA,RI,SC,SD,TN,TX,UT,VA,VT,WA,WI,WV,WY';
+		$wasArray = explode(',', $stateString);
 
         $this->load->model('was');
 
-		$data['mode'] = $mode_type;
+		$bands[] = $this->security->xss_clean($this->input->post('band'));
 
-        $bands[] = $band_type;
+        $postdata['qsl'] = $this->input->post('qsl') == 0 ? NULL: 1;
+        $postdata['lotw'] = $this->input->post('lotw') == 0 ? NULL: 1;
+        $postdata['eqsl'] = $this->input->post('eqsl') == 0 ? NULL: 1;
+        $postdata['worked'] = $this->input->post('worked') == 0 ? NULL: 1;
+        $postdata['confirmed'] = $this->input->post('confirmed')  == 0 ? NULL: 1;
+        $postdata['notworked'] = $this->input->post('notworked')  == 0 ? NULL: 1;
+        $postdata['band'] = $this->security->xss_clean($this->input->post('band'));
+        $postdata['mode'] = $this->security->xss_clean($this->input->post('mode'));
 
-        $postdata['qsl'] = 1;
-        $postdata['lotw'] = 1;
-        $postdata['eqsl'] = 0;
-        $postdata['worked'] = 1;
-        $postdata['confirmed'] = 1;
-        $postdata['notworked'] = 1;
-        $postdata['band'] = $band_type;
-		$postdata['mode'] = $mode_type;
+        $was_array = $this->was->get_was_array($bands, $postdata);
 
-        $data['was_array'] = $this->was->get_was_array($bands, $postdata);
+        $states = array();
 
-        $data['page_title'] = "";
+		foreach ($wasArray as $state) {                  	 // Generating array for use in the table
+            $states[$state] = '-';                   // Inits each state's count
+        }
 
-        $this->load->view('awards/was/map', $data);
+
+        foreach ($was_array as $was => $value) {
+            foreach ($value  as $key) {
+                if($key != "") {
+                    if (strpos($key, '>W<') !== false) {
+                        $states[$was] = 'W';
+                        break;
+                    }
+                    if (strpos($key, '>C<') !== false) {
+                        $states[$was] = 'C';
+                        break;
+                    }
+                    if (strpos($key, '-') !== false) {
+                        $states[$was] = '-';
+                        break;
+                    }
+                }
+            }
+        }
+
+        header('Content-Type: application/json');
+        echo json_encode($states);
     }
 
     /*
