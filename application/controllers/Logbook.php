@@ -209,7 +209,7 @@ class Logbook extends CI_Controller {
 		if(!empty($logbooks_locations_array)) {
 			$extrawhere='';
 			if (isset($user_default_confirmation) && strpos($user_default_confirmation, 'Q') !== false) {
-				$extrawhere="COL_QSL_RCVD='Y'"; 
+				$extrawhere="COL_QSL_RCVD='Y'";
 			}
 			if (isset($user_default_confirmation) && strpos($user_default_confirmation, 'L') !== false) {
 				if ($extrawhere!='') {
@@ -336,10 +336,10 @@ class Logbook extends CI_Controller {
 			$return['workedBefore'] = true;
 		}
 
-		
+
 		$extrawhere='';
 		if (isset($user_default_confirmation) && strpos($user_default_confirmation, 'Q') !== false) {
-			$extrawhere="COL_QSL_RCVD='Y'"; 
+			$extrawhere="COL_QSL_RCVD='Y'";
 		}
 		if (isset($user_default_confirmation) && strpos($user_default_confirmation, 'L') !== false) {
 			if ($extrawhere!='') {
@@ -427,7 +427,7 @@ class Logbook extends CI_Controller {
 
 			$extrawhere='';
 			if (isset($user_default_confirmation) && strpos($user_default_confirmation, 'Q') !== false) {
-				$extrawhere="COL_QSL_RCVD='Y'"; 
+				$extrawhere="COL_QSL_RCVD='Y'";
 			}
 			if (isset($user_default_confirmation) && strpos($user_default_confirmation, 'L') !== false) {
 				if ($extrawhere!='') {
@@ -528,7 +528,7 @@ class Logbook extends CI_Controller {
 
 			$extrawhere='';
 			if (isset($user_default_confirmation) && strpos($user_default_confirmation, 'Q') !== false) {
-				$extrawhere="COL_QSL_RCVD='Y'"; 
+				$extrawhere="COL_QSL_RCVD='Y'";
 			}
 			if (isset($user_default_confirmation) && strpos($user_default_confirmation, 'L') !== false) {
 				if ($extrawhere!='') {
@@ -589,109 +589,6 @@ class Logbook extends CI_Controller {
 		}
 	}
 
-
-	/* Used to generate maps for displaying on /logbook/ */
-	function qso_map() {
-		header('Content-Type: application/json; charset=utf-8');
-		$this->load->model('logbook_model');
-
-		$this->load->library('qra');
-
-		$data['qsos'] = $this->logbook_model->get_qsos($this->uri->segment(3),$this->uri->segment(4));
-
-		echo "{\"markers\": [";
-		$count = 1;
-		foreach ($data['qsos']->result() as $row) {
-			// check if qso is confirmed //
-			if (($row->COL_EQSL_QSL_RCVD=='Y') || ($row->COL_LOTW_QSL_RCVD=='Y') || ($row->COL_QSL_RCVD=='Y')) { $row->_is_confirmed = 'Y'; } else { $row->_is_confirmed = 'N'; }
-
-			if($row->COL_GRIDSQUARE != null) {
-				$stn_loc = $this->qra->qra2latlong($row->COL_GRIDSQUARE);
-				if($count != 1) {
-					echo ",";
-				}
-
-				if($row->COL_SAT_NAME != null) {
-						echo "{\"lat\":\"".$stn_loc[0]."\",\"lng\":\"".$stn_loc[1]."\", \"html\":\"Callsign: ".$row->COL_CALL."<br />Date/Time: ".$row->COL_TIME_ON."<br />SAT: ".$row->COL_SAT_NAME."<br />Mode: ";
-						echo $row->COL_SUBMODE==null?$row->COL_MODE:$row->COL_SUBMODE;
-						echo "\",\"label\":\"".$row->COL_CALL."\", \"confirmed\":\"".$row->_is_confirmed."\"}";
-				} else {
-						echo "{\"lat\":\"".$stn_loc[0]."\",\"lng\":\"".$stn_loc[1]."\", \"html\":\"Callsign: ".$row->COL_CALL."<br />Date/Time: ".$row->COL_TIME_ON."<br />Band: ".$row->COL_BAND."<br />Mode: ";
-						echo $row->COL_SUBMODE==null?$row->COL_MODE:$row->COL_SUBMODE;
-						echo "\",\"label\":\"".$row->COL_CALL."\", \"confirmed\":\"".$row->_is_confirmed."\"}";
-				}
-
-				$count++;
-			}elseif($row->COL_VUCC_GRIDS != null) {
-
-				$grids = explode(",", $row->COL_VUCC_GRIDS);
-				if (count($grids) == 2) {
-					$grid1 = $this->qra->qra2latlong(trim($grids[0]));
-					$grid2 = $this->qra->qra2latlong(trim($grids[1]));
-
-					$coords[]=array('lat' => $grid1[0],'lng'=> $grid1[1]);
-					$coords[]=array('lat' => $grid2[0],'lng'=> $grid2[1]);
-
-					$stn_loc = $this->qra->get_midpoint($coords);
-				}
-				if (count($grids) == 4) {
-					$grid1 = $this->qra->qra2latlong(trim($grids[0]));
-					$grid2 = $this->qra->qra2latlong(trim($grids[1]));
-					$grid3 = $this->qra->qra2latlong(trim($grids[2]));
-					$grid4 = $this->qra->qra2latlong(trim($grids[3]));
-
-					$coords[]=array('lat' => $grid1[0],'lng'=> $grid1[1]);
-					$coords[]=array('lat' => $grid2[0],'lng'=> $grid2[1]);
-					$coords[]=array('lat' => $grid3[0],'lng'=> $grid3[1]);
-					$coords[]=array('lat' => $grid4[0],'lng'=> $grid4[1]);
-
-					$stn_loc = $this->qra->get_midpoint($coords);
-				}
-
-				if($count != 1) {
-					echo ",";
-				}
-
-				if($row->COL_SAT_NAME != null) {
-					echo "{\"lat\":\"".$stn_loc[0]."\",\"lng\":\"".$stn_loc[1]."\", \"html\":\"Callsign: ".$row->COL_CALL."<br />Date/Time: ".$row->COL_TIME_ON."<br />SAT: ".$row->COL_SAT_NAME."<br />Mode: ";
-					echo $row->COL_SUBMODE==null?$row->COL_MODE:$row->COL_SUBMODE;
-					echo "\",\"label\":\"".$row->COL_CALL."\", \"confirmed\":\"".$row->_is_confirmed."\"}";
-				} else {
-					echo "{\"lat\":\"".$stn_loc[0]."\",\"lng\":\"".$stn_loc[1]."\", \"html\":\"Callsign: ".$row->COL_CALL."<br />Date/Time: ".$row->COL_TIME_ON."<br />Band: ".$row->COL_BAND."<br />Mode: ";
-					echo $row->COL_SUBMODE==null?$row->COL_MODE:$row->COL_SUBMODE;
-					echo "\",\"label\":\"".$row->COL_CALL."\", \"confirmed\":\"".$row->_is_confirmed."\"}";
-				}
-
-				$count++;
-
-			} else {
-				if($count != 1) {
-					echo ",";
-				}
-
-				$result = $this->logbook_model->dxcc_lookup($row->COL_CALL, $row->COL_TIME_ON);
-
-				if(isset($result)) {
-					$lat = $result['lat'];
-					$lng = $result['long'];
-				}
-				echo "{\"lat\":\"".$lat."\",\"lng\":\"".$lng."\", \"html\":\"Callsign: ".$row->COL_CALL."<br />Date/Time: ".$row->COL_TIME_ON."<br />Band: ".$row->COL_BAND."<br />Mode: ";
-				echo $row->COL_SUBMODE==null?$row->COL_MODE:$row->COL_SUBMODE;
-				echo "\",\"label\":\"".$row->COL_CALL."\", \"confirmed\":\"".$row->_is_confirmed."\"}";
-				$count++;
-			}
-
-		}
-		echo "]";
-		
-		// [MAP Custom] ADD Station //
-		$this->load->model('Stations');
-		$station_json = $this->Stations->get_station_json_for_map();
-		echo (!empty($station_json))?', '.$station_json:'';
-
-		echo "}";
-	}
-
 	function view($id) {
 		$this->load->library('DxccFlag');
 
@@ -737,12 +634,13 @@ class Logbook extends CI_Controller {
 
 			$this->db->join('station_profile', 'station_profile.station_id = '.$this->config->item('table_name').'.station_id');
 			$this->db->where_in('station_profile.station_id', $logbooks_locations_array);
-			$this->db->order_by(''.$this->config->item('table_name').'.COL_TIME_ON', "desc");
 
+			$this->db->group_start();
 			$this->db->where($this->config->item('table_name').'.COL_CALL', $id);
 			$this->db->or_like($this->config->item('table_name').'.COL_CALL', '/'.$id,'before');
 			$this->db->or_like($this->config->item('table_name').'.COL_CALL', $id.'/','after');
 			$this->db->or_like($this->config->item('table_name').'.COL_CALL', '/'.$id.'/');
+			$this->db->group_end();
 
 			$this->db->order_by($this->config->item('table_name').".COL_TIME_ON", "desc");
 			$this->db->limit(5);
