@@ -532,6 +532,9 @@ $(function () {
                     $(".searchbutton").removeClass('running');
                     $(".searchbutton").prop('disabled', false);
                     $("#btn-save").show();
+                    $('.table-responsive .dropdown-toggle').off('mouseenter').on('mouseenter', function () {
+                        showQsoActionsMenu($(this).closest('.dropdown'));
+                    });
                 });
         } else {
             BootstrapDialog.show({
@@ -816,37 +819,6 @@ function showActivatorsMap(call, count, grids) {
 <script type="text/javascript">
   $(function () {
      $('[data-bs-toggle="tooltip"]').tooltip()
-  });
-
-  $(function () {
-    // hold onto the drop down menu
-    var dropdownMenu;
-
-    // and when you show it, move it to the body
-    $(window).on('show.bs.dropdown', function (e) {
-
-    // grab the menu
-    dropdownMenu = $(e.target).find('.dropdown-menu');
-
-    // detach it and append it to the body
-    $('body').append(dropdownMenu.detach());
-
-    // grab the new offset position
-    var eOffset = $(e.target).offset();
-
-    // make sure to place it where it would normally go (this could be improved)
-    dropdownMenu.css({
-        'display': 'block',
-            'top': eOffset.top + $(e.target).outerHeight(),
-            'left': eOffset.left
-       });
-    });
-
-    // and when you hide it, reattach the drop down, and hide it normally
-    $(window).on('hide.bs.dropdown', function (e) {
-        $(e.target).append(dropdownMenu.detach());
-        dropdownMenu.hide();
-    });
   });
 </script>
 
@@ -1361,6 +1333,23 @@ $($('#callsign')).on('keypress',function(e) {
     <script>
     // Javascript for controlling rig frequency.
 	  var updateFromCAT = function() {
+      var cat2UI = function(ui, cat, allow_empty, allow_zero, callback_on_update) {
+        // Check, if cat-data is available
+        if(cat == null) {
+          return;
+        } else if (typeof allow_empty !== 'undefined' && !allow_empty && cat == '') {
+          return;
+        } else if (typeof allow_zero !== 'undefined' && !allow_zero && cat == '0' ) {
+          return;
+        }
+        // Only update the ui-element, if cat-data has changed
+        if (ui.data('catValue') != cat) {
+          ui.val(cat);
+          ui.data('catValue',cat);
+          if (typeof callback_on_update === 'function') { callback_on_update(cat); }
+        }
+      }
+
 		  if($('select.radios option:selected').val() != '0') {
 			  radioID = $('select.radios option:selected').val();
 			  $.getJSON( "radio/json/" + radioID, function( data ) {
@@ -1386,31 +1375,14 @@ $($('#callsign')).on('keypress',function(e) {
 					  if($('.radio_login_error').length != 0) {
 						  $(".radio_login_error" ).remove();
 					  }
-					  $('#frequency').val(data.frequency);
-					  $("#band").val(frequencyToBand(data.frequency));
-					  if (data.frequency_rx != "") {
-						  $('#frequency_rx').val(data.frequency_rx);
-						  $("#band_rx").val(frequencyToBand(data.frequency_rx));
-					  }
-
-					  if ((data.mode != "") && (data.mode != null)) {
-					  	old_mode = $(".mode").val();
-					  	$(".mode").val(data.mode);
-					  } else {
-					  	old_mode = $(".mode").val();
-					  }
-
-					  if (old_mode !== $(".mode").val()) {
-						  // Update RST on mode change via CAT
-						  setRst($(".mode").val());
-					  }
-					  $("#sat_name").val(data.satname);
-					  $("#sat_mode").val(data.satmode);
-					  if(data.power != null && data.power != 0) {
-						  $("#transmit_power").val(data.power);
-					  }
-					  $("#selectPropagation").val(data.prop_mode);
-
+            cat2UI($('#frequency'),data.frequency,false,true,function(d){$("#band").val(frequencyToBand(d))});
+            cat2UI($('#frequency_rx'),data.frequency_rx,false,true,function(d){$("#band_rx").val(frequencyToBand(d))});
+            cat2UI($('.mode'),data.mode,false,false,function(d){setRst($(".mode").val())});
+            cat2UI($('#sat_name'),data.satname,false,false);
+            cat2UI($('#sat_mode'),data.satmode,false,false);
+            cat2UI($('#transmit_power'),data.power,false,false);
+            cat2UI($('#selectPropagation'),data.prop_mode,false,false);
+            
 					  // Display CAT Timeout warning based on the figure given in the config file
 					  var minutes = Math.floor(<?php echo $this->optionslib->get_option('cat_timeout_interval'); ?> / 60);
 
@@ -1430,15 +1402,17 @@ $($('#callsign')).on('keypress',function(e) {
 						  if(data.power != null && data.power != 0) {
 							  text = text+'<span style="margin-left:10px"></span>'+data.power+' W';
 						  }
+              ptext = '';
 						  if(data.prop_mode != null && data.prop_mode != '') {
-							  text = text+'<span style="margin-left:10px"></span>('+data.prop_mode;
+							  ptext = ptext + data.prop_mode;
 							  if (data.prop_mode == 'SAT') {
-								  text = text+' '+data.satname;
+								  ptext = ptext + ' ' + data.satname;
 							  }
 						  }
 						  if(data.frequency_rx != null && data.frequency_rx != 0) {
-							  text = text+'<span style="margin-left:10px"></span><b>RX:</b> '+(Math.round(parseInt(data.frequency_rx)/1000)/1000).toFixed(3)+' MHz)';
+							  ptext = ptext + '<span style="margin-left:10px"></span><b>RX:</b> ' + (Math.round(parseInt(data.frequency_rx)/1000)/1000).toFixed(3) + ' MHz';
 						  }
+              if( ptext != '') { text = text + '<span style="margin-left:10px"></span>(' + ptext + ')';}
 						  if (! $('#radio_cat_state').length) {
 							  $('#radio_status').prepend('<div aria-hidden="true"><div id="radio_cat_state" class="alert alert-success radio_cat_state" role="alert">'+text+'</div></div>');
 						  } else {
@@ -1642,6 +1616,9 @@ $(document).ready(function(){
 					  $('#exampleModal').modal('show');
 					  $('[data-bs-toggle="tooltip"]').tooltip({ boundary: 'window' });
 				  }
+                    $('.table-responsive .dropdown-toggle').off('mouseenter').on('mouseenter', function () {
+                        showQsoActionsMenu($(this).closest('.dropdown'));
+                    });
 			  }
 		  });
   }
@@ -1776,6 +1753,9 @@ $(document).ready(function(){
 					  $('#exampleModal').modal('show');
 					  $('[data-bs-toggle="tooltip"]').tooltip({ boundary: 'window' });
 				  }
+                    $('.table-responsive .dropdown-toggle').off('mouseenter').on('mouseenter', function () {
+                        showQsoActionsMenu($(this).closest('.dropdown'));
+                    });
 			  }
 		  });
 		  <?php } ?>
@@ -2185,6 +2165,9 @@ $(document).ready(function(){
                             message: html,
                             onshown: function(dialog) {
                                $('[data-bs-toggle="tooltip"]').tooltip();
+                               $('.table-responsive .dropdown-toggle').off('mouseenter').on('mouseenter', function () {
+                                    showQsoActionsMenu($(this).closest('.dropdown'));
+                                });
                             },
                             buttons: [{
                                 label: lang_admin_close,
@@ -2491,6 +2474,9 @@ function viewEqsl(picture, callsign) {
                                 'csv'
                             ]
                         });
+                        $('.table-responsive .dropdown-toggle').off('mouseenter').on('mouseenter', function () {
+                            showQsoActionsMenu($(this).closest('.dropdown'));
+                        });
                     },
                     buttons: [{
                         label: lang_admin_close,
@@ -2513,7 +2499,7 @@ function viewEqsl(picture, callsign) {
 			    'Mode': mode,
 			    'Type': type,
 			    'QSL' : qsl
-    },
+        },
 	    success: function (html) {
 		    var dialog = new BootstrapDialog({
 		    title: lang_general_word_qso_data,
@@ -2536,6 +2522,9 @@ function viewEqsl(picture, callsign) {
 						    'csv'
 					    ]
 				    });
+                    $('.table-responsive .dropdown-toggle').off('mouseenter').on('mouseenter', function () {
+                        showQsoActionsMenu($(this).closest('.dropdown'));
+                    });
 			    },
 			    buttons: [{
 			    label: lang_admin_close,
