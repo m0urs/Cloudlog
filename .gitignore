@@ -16,6 +16,7 @@
 /assets/js/sections/custom.js
 /assets/json/dok.txt
 /assets/json/sota.txt
+/assets/json/pota.txt
 .idea/*
 .DS_Store
 sync.sh
