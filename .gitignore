@@ -17,6 +17,8 @@
 /assets/json/dok.txt
 /assets/json/sota.txt
 /assets/json/pota.txt
+/cypress/screenshots
+/node_modules/
 .idea/*
 .DS_Store
 sync.sh
