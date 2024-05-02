@@ -877,6 +877,8 @@ class User extends CI_Controller {
 	function login() {
 		// Check our version and run any migrations
 		$this->load->library('Migration');
+		$this->load->library('encryption');
+
 		$this->migration->current();
 
 		$this->load->model('user_model');
@@ -889,6 +891,17 @@ class User extends CI_Controller {
 
 		$data['user'] = $query->row();
 
+		// Read the cookie remeber_me and log the user in
+		if($this->input->cookie(config_item('cookie_prefix').'remember_me')) {
+			$encrypted_string = $this->input->cookie(config_item('cookie_prefix').'remember_me');
+			$decrypted_string = $this->encryption->decrypt($encrypted_string);
+			$this->user_model->update_session($decrypted_string);
+			$this->user_model->set_last_login($decrypted_string);
+
+			log_message('debug', '[User ID: '.$decrypted_string.'] Remember Me Login Successful');
+
+			redirect('dashboard');
+		}
 		
 		if ($this->form_validation->run() == FALSE) {
 			$data['page_title'] = "Login";
@@ -910,6 +923,19 @@ class User extends CI_Controller {
 
 				);
 				$this->input->set_cookie($cookie);
+				
+				// Create a remember me cookie
+				if($this->input->post('remember_me') == '1') {
+					$encrypted_string = $this->encryption->encrypt($data['user']->user_id);
+
+					$cookie= array(
+						'name'   => 'remember_me',
+						'value'  => $encrypted_string,
+						'expire' => '1209600',
+						'secure' => FALSE
+					);
+					$this->input->set_cookie($cookie);
+				}
 				redirect('dashboard');
 			} else {
 				$this->session->set_flashdata('error', 'Incorrect username or password!');
@@ -922,6 +948,9 @@ class User extends CI_Controller {
 		$this->load->model('user_model');
 
 		$user_name = $this->session->userdata('user_name');
+
+		// Delete remember_me cookie
+		setcookie('remember_me', '', time() - 3600, '/');
 
 		$this->user_model->clear_session();
 
