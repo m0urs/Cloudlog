@@ -805,7 +805,37 @@ if ($this->session->userdata('user_id') != null) {
 
 <?php if ($this->uri->segment(1) == "" || $this->uri->segment(1) == "dashboard") { ?>
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/leaflet/L.Maidenhead.js"></script>
-    <script id="leafembed" type="text/javascript" src="<?php echo base_url(); ?>assets/js/leaflet/leafembed.js" tileUrl="<?php echo $this->optionslib->get_option('option_map_tile_server'); ?>"></script>
+
+    <script>
+        var iconsList = {
+            'qso': {
+                'color': '#FF0000',
+                'icon': 'fas fa-dot-circle'
+            }
+        };
+    </script>
+
+    <script>
+        // jquery onready
+        $(document).ready(function() {
+            $.ajax({
+                url: base_url + 'index.php/user_options/get_map_custom',
+                type: 'GET',
+                dataType: 'json',
+                error: function() {
+                    console.log('[ERROR] ajax get_map_custom() function return error.');
+                },
+                success: function(json_mapinfo) {
+                    console.log(json_mapinfo);
+                    if (typeof json_mapinfo.qso !== "undefined") {
+                        iconsList = json_mapinfo;
+                    }
+                }
+            });
+        });
+
+        console.log(iconsList);
+    </script>
 
     <script type="text/javascript">
         $(function() {
@@ -822,18 +852,76 @@ if ($this->session->userdata('user_id') != null) {
 
         var qso_loc = '<?php echo site_url('map/map_plot_json'); ?>';
         var q_zoom = 3;
+        var osmUrl = '<?php echo $this->optionslib->get_option('option_map_tile_server'); ?>';
+        var osmCopyright = '<?php echo $this->optionslib->get_option('map_tile_server_copyright'); ?>';
+
+        var redIconImg = L.icon({
+            iconUrl: icon_dot_url,
+            iconSize: [10, 10]
+        });
 
         $(document).ready(function() {
             <?php if ($this->config->item('map_gridsquares') != FALSE) { ?>
-                var grid = "Yes";
+                var ShowGrid = "Yes";
             <?php } else { ?>
-                var grid = "No";
+                var ShowGrid = "No";
             <?php } ?>
-            initmap(grid, 'map', {
-                'dataPost': {
-                    'nb_qso': '18'
-                }
+
+            var layer = L.tileLayer(osmUrl, {
+                maxZoom: 18,
+                attribution: osmCopyright,
             });
+
+            var map = L.map('map', {
+                layers: [layer],
+                center: [q_lat, q_lng],
+                zoom: q_zoom,
+                fullscreenControl: true,
+                fullscreenControlOptions: {
+                    position: 'topleft'
+                },
+            });
+
+            /*var printer = L.easyPrint({
+                sizeModes: ['Current'],
+                filename: 'myMap',
+                exportOnly: true,
+                hideControlContainer: true
+            }).addTo(map);*/
+
+            var markers = {};
+
+            function loadMarkers() {
+                fetch(qso_loc)
+                    .then(response => response.json())
+                    .then(data => {
+                        var newMarkers = {};
+                        data.markers.forEach(marker => {
+                            var key = `${marker.lat},${marker.lng}`;
+                            newMarkers[key] = marker;
+                            if (!markers[key]) {
+                                var icon = L.divIcon({
+                                    className: 'custom-icon',
+                                    html: `<i class="${iconsList.qso.icon}" style="color:${iconsList.qso.color}"></i>`
+                                });
+                                L.marker([marker.lat, marker.lng], {
+                                        icon: icon
+                                    })
+                                    .addTo(map)
+                                    .bindPopup(marker.html);
+                            }
+                        });
+                        Object.keys(markers).forEach(key => {
+                            if (!newMarkers[key]) {
+                                map.removeLayer(markers[key]);
+                            }
+                        });
+                        markers = newMarkers;
+                    });
+            }
+
+            loadMarkers();
+            setInterval(loadMarkers, 5000);
 
         });
     </script>

@@ -27,22 +27,23 @@ $lang['general_word_not_display'] = "Non visualizzare";
 $lang['general_word_icon'] = "Icona";
 $lang['general_word_never'] = "Mai";
 
-$lang['general_word_date'] = 'Dati';
+$lang['general_word_date'] = 'Data';
 $lang['general_word_startdate'] = "Data di inizio";
 $lang['general_word_enddate'] = "Data di fine";
 $lang['general_word_time'] = 'Orario';
 $lang['general_word_time_on'] = 'Tempo attivo';
 $lang['general_word_time_off'] = 'Tempo libero';
-$lang['general_word_datetime'] = 'Dati/Orario';
+$lang['general_word_datetime'] = 'Data/Orario';
 $lang['general_word_none'] = 'Nessuno';
 $lang['general_word_name'] = 'Nome';
+$lang['general_word_flag'] = 'Bandiera';
 $lang['general_word_location'] = 'Luogo';
 $lang['general_word_comment'] = 'Commento';
 $lang['general_word_general'] = 'Generale';
 $lang['general_word_satellite'] = 'Satellite';
 $lang['general_word_satellite_short'] = 'Sabato';
 $lang['general_word_notes'] = 'Nota';
-$lang['general_word_country'] = 'Paese';
+$lang['general_word_country'] = 'Nazione';
 $lang['general_word_city'] = 'Città';
 
 $lang['general_word_total'] = 'Totale';
@@ -89,7 +90,7 @@ $lang['general_word_lotw'] = 'Logbook of the World';
 $lang['general_word_lotw_short'] = 'LoTW';
 
 $lang['general_word_details'] = 'Dettagli';
-$lang['general_word_qso_data'] = 'Dati del QSO';
+$lang['general_word_qso_data'] = 'Data del QSO';
 
 $lang['general_edit_qso'] = 'Modifica QSO';
 $lang['general_mark_qsl_rx_bureau'] = 'Segna QSL Ricevuta (Bureau)';
@@ -128,7 +129,7 @@ $lang['gen_hamradio_suffix'] = 'Suffisso';
 $lang['gen_hamradio_de'] = 'De';
 $lang['gen_hamradio_dx'] = 'Dx';
 $lang['gen_hamradio_mode'] = 'Modo';
-$lang['gen_hamradio_ant_az'] = 'Antenna Azimuth';
+$lang['gen_hamradio_ant_az'] = 'Antenna Azimut';
 $lang['gen_hamradio_ant_el'] = 'Antenna Elevazione';
 $lang['gen_hamradio_rst_sent'] = 'Inviato';
 $lang['gen_hamradio_rst_rcvd'] = 'Ricevuto';
@@ -140,7 +141,7 @@ $lang['gen_hamradio_frequency_rx'] = 'Frequenza (RX)';
 $lang['gen_hamradio_radio'] = 'Radio';
 $lang['gen_hamradio_rsts'] = 'RST (I)';
 $lang['gen_hamradio_rstr'] = 'RST (R)';
-$lang['gen_hamradio_refs'] = 'Refs';
+$lang['gen_hamradio_refs'] = 'Griglia';
 $lang['gen_hamradio_myrefs'] = 'Miei Riferimenti';
 $lang['gen_hamradio_exchange_sent_short'] = 'Scambio (I)';
 $lang['gen_hamradio_exchange_rcvd_short'] = 'Scambio (R)';
@@ -222,8 +223,8 @@ $lang['general_word_today'] = 'Oggi';
 
 $lang['dashboard_php_version_warning'] = 'Devi aggiornare la tua versione PHP. La versione minima è 7.4. La tua versione è';
 $lang['dashboard_country_files_warning'] = 'Devi aggiornare i file dei paesi! Vai <a href="'.site_url('update').'">qui</a> per farlo!';
-$lang['dashboard_locations_warning'] = 'Non hai posizioni delle stazioni. Vai <a href="'. site_url('station'). '">qui</a> per crearlo!';
-$lang['dashboard_logbooks_warning'] = 'Non hai il registro della stazione. Vai <a href="'. site_url('logbooks'). '">qui</a> per crearlo!';
+$lang['dashboard_locations_warning'] = 'Non hai luoghi delle stazioni. Vai <a href="'. site_url('station'). '">qui</a> per crearlo!';
+$lang['dashboard_logbooks_warning'] = 'Non hai il registro di stazione. Vai <a href="'. site_url('logbooks'). '">qui</a> per crearlo!';
 $lang['hams_at_no_activations_found'] = 'Nessuna attivazione imminente trovata. Per favore controllare più tardi.';
 
 $lang['datatables_language'] = "it-IT";
