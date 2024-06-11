@@ -165,7 +165,7 @@ class Logbook_model extends CI_Model
     $qso_rx_power = null;
 
     if ($this->input->post('copyexchangeto')) {
-      switch($this->input->post('copyexchangeto')) {
+      switch ($this->input->post('copyexchangeto')) {
         case 'dok':
           $darc_dok = $srx_string;
           break;
@@ -184,13 +184,13 @@ class Logbook_model extends CI_Model
         case 'power':
           $qso_rx_power = $srx_string;
           break;
-        // Example for more sophisticated exchanges and their split into the db:
-        //case 'name/power':
-        //  if (strlen($srx_string) == 0) break;
-        //  $exch_pt = explode(" ",$srx_string);
-        //  $qso_name = $exch_pt[0];
-        //  if (count($exch_pt)>1) $qso_power = $exch_pt[1];
-        //  break;
+          // Example for more sophisticated exchanges and their split into the db:
+          //case 'name/power':
+          //  if (strlen($srx_string) == 0) break;
+          //  $exch_pt = explode(" ",$srx_string);
+          //  $qso_name = $exch_pt[0];
+          //  if (count($exch_pt)>1) $qso_power = $exch_pt[1];
+          //  break;
         default:
       }
     }
@@ -2057,6 +2057,37 @@ class Logbook_model extends CI_Model
     return $query->num_rows();
   }
 
+  function check_if_grid_4char_worked_in_logbook($grid, $StationLocationsArray = null, $band = null)
+  {
+    if ($StationLocationsArray == null) {
+      $CI = &get_instance();
+      $CI->load->model('logbooks_model');
+      $logbooks_locations_array = $CI->logbooks_model->list_logbook_relationships($this->session->userdata('active_station_logbook'));
+    } else {
+      $logbooks_locations_array = $StationLocationsArray;
+    }
+
+    $this->db->select('COL_GRIDSQUARE');
+    $this->db->where_in('station_id', $logbooks_locations_array);
+    $this->db->group_start();
+    $this->db->like('SUBSTRING(COL_GRIDSQUARE, 1, 4)', substr($grid, 0, 4));
+    $this->db->or_like('SUBSTRING(COL_VUCC_GRIDS, 1, 4)', substr($grid, 0, 4));
+    $this->db->group_end();
+
+    if ($band != null && $band != 'SAT') {
+      $this->db->where('COL_BAND', $band);
+    } else if ($band == 'SAT') {
+      // Where col_sat_name is not empty
+      $this->db->where('COL_SAT_NAME !=', '');
+    }
+    $this->db->limit('2');
+
+    $query = $this->db->get($this->config->item('table_name'));
+
+    return $query->num_rows();
+  }
+
+
   /* Get all QSOs with a valid grid for use in the KML export */
   function kml_get_all_qsos($band, $mode, $dxcc, $cqz, $propagation, $fromdate, $todate)
   {
@@ -3458,7 +3489,7 @@ class Logbook_model extends CI_Model
             $rx_pwr = $record['rx_pwr'];
           } else {
             $rx_pwr = null;
-            $my_error .= "Error QSO: Date: " . $time_on . " Callsign: " . $record['call'] . " RX_PWR (".$record['rx_pwr'].") is not a number<br>";
+            $my_error .= "Error QSO: Date: " . $time_on . " Callsign: " . $record['call'] . " RX_PWR (" . $record['rx_pwr'] . ") is not a number<br>";
           }
         }
       } else {
@@ -4733,19 +4764,23 @@ class Logbook_model extends CI_Model
 
   // [JSON PLOT] return array for plot qso for map //
   public function get_plot_array_for_map($qsos_result, $isVisitor = false)
-  {
+{
     $this->load->library('qra');
-
+    $CI = &get_instance();
+    $CI->load->library('DxccFlag');
+    
     $json["markers"] = array();
-
+    
     foreach ($qsos_result as $row) {
-      $plot = array('lat' => 0, 'lng' => 0, 'html' => '', 'label' => '', 'confirmed' => 'N');
-
+      $plot = array('lat' => 0, 'lng' => 0, 'html' => '', 'label' => '', 'flag' => '', 'confirmed' => 'N');
+      
       $plot['label'] = $row->COL_CALL;
-
-      $plot['html'] = "Callsign: " . $row->COL_CALL . "<br />Date/Time: " . $row->COL_TIME_ON . "<br />";
-      $plot['html'] .= ($row->COL_SAT_NAME != null) ? ("SAT: " . $row->COL_SAT_NAME . "<br />") : ("Band: " . $row->COL_BAND . "<br />");
-      $plot['html'] .= "Mode: " . ($row->COL_SUBMODE == null ? $row->COL_MODE : $row->COL_SUBMODE) . "<br />";
+      $flag = strtolower($CI->dxccflag->getISO($row->COL_DXCC));
+      $plot['flag'] = '<span data-bs-toggle="tooltip" title="' . ucwords(strtolower(($row->name==null?"- NONE -":$row->name))) . '"><span class="fi fi-' . $flag .'"></span></span> ';
+      $plot['html'] = ($row->COL_GRIDSQUARE != null ?  "<b>Grid:</b> " . $row->COL_GRIDSQUARE . "<br />" : "");
+      $plot['html'] .= "<b>Date/Time:</b> " . $row->COL_TIME_ON . "<br />";
+      $plot['html'] .= ($row->COL_SAT_NAME != null) ? ("<b>SAT:</b> " . $row->COL_SAT_NAME . "<br />") : ("<b>Band:</b> " . $row->COL_BAND . " ");
+      $plot['html'] .= "<b>Mode:</b> " . ($row->COL_SUBMODE == null ? $row->COL_MODE : $row->COL_SUBMODE) . "<br />";
 
       // check if qso is confirmed //
       if (!$isVisitor) {
